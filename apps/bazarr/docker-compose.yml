@@ -15,8 +15,6 @@ services:
       - /mnt/wd5tb/media/movies:/movies
       - /mnt/wd5tb/media/tv:/tv
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
       - "glance.name=Bazarr"
       - "glance.icon=si:subtitleedit"
       - "glance.url=http://bazarr.home.local/"
