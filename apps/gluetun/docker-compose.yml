@@ -21,24 +21,23 @@ services:
       # qBittorrent
       - "traefik.enable=true"
       - "traefik.http.routers.qbittorrent.rule=Host(`qbittorrent.home.local`)"
-      - "traefik.http.routers.qbittorrent.entrypoints=web"
       - "traefik.http.services.qbittorrent.loadbalancer.server.port=8080"
 
       # Bazarr
       - "traefik.http.routers.bazarr.rule=Host(`bazarr.home.local`)"
-      - "traefik.http.routers.bazarr.entrypoints=web"
+      - "traefik.http.routers.bazarr.service=bazarr"
 
       # Radarr
       - "traefik.http.routers.radarr.rule=Host(`radarr.home.local`)"
-      - "traefik.http.routers.radarr.entrypoints=web"
+      - "traefik.http.routers.radarr.service=radarr"
 
       # Prowlarr
       - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.home.local`)"
-      - "traefik.http.routers.prowlarr.entrypoints=web"
+      - "traefik.http.routers.prowlarr.service=prowlarr"
 
       # Sonarr
       - "traefik.http.routers.sonarr.rule=Host(`sonarr.home.local`)"
-      - "traefik.http.routers.sonarr.entrypoints=web"
+      - "traefik.http.routers.sonarr.service=sonarr"
 
       # Glance (optional dashboard)
       - "glance.name=Gluetun"
