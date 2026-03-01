@@ -29,7 +29,7 @@ services:
 
 secrets:
   sops_age_key:
-    file: sops_age_key.txt
+    file: /srv/docker/dococd/sops_age_key.txt
 
 volumes:
   data:
