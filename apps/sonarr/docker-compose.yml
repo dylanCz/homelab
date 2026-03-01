@@ -19,6 +19,7 @@ services:
       - /mnt/wd5tb/media/tv:/tv
     labels:
       - "traefik.enable=true"
+      - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
       - "glance.name=Sonarr"
       - "glance.icon=si:sonarr"
       - "glance.url=http://sonarr.home.local/"

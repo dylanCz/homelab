@@ -42,7 +42,6 @@ services:
       # Sonarr
       - "traefik.http.routers.sonarr.rule=Host(`sonarr.home.local`)"
       - "traefik.http.routers.sonarr.entrypoints=web"
-      - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
 
       # Glance (optional dashboard)
       - "glance.name=Gluetun"
