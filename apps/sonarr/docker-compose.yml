@@ -18,6 +18,7 @@ services:
       - /mnt/wd5tb/torrents:/downloads
       - /mnt/wd5tb/media/tv:/tv
     labels:
+      - "traefik.enable=true"
       - "glance.name=Sonarr"
       - "glance.icon=si:sonarr"
       - "glance.url=http://sonarr.home.local/"
