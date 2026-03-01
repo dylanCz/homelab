@@ -1,0 +1,181 @@
+version: "3.5"
+
+services:
+  gluetun:
+    container_name: gluetun
+    image: qmcgaw/gluetun:v3.41.1
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    healthcheck:
+      test: ["CMD", "/gluetun-entrypoint", "healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    ports:
+      - 6881:6881 # qBittorrent TCP
+      - 6881:6881/udp # qBittorrent UDP
+      - 6767:6767 # Bazarr
+      - 7878:7878 # Radarr
+      - 8989:8989 # Sonarr
+      - 9696:9696 # Prowlarr
+    networks:
+      lan:
+        ipv4_address: 172.19.0.9
+    labels:
+      # qBittorrent
+      - "traefik.enable=true"
+      - "traefik.http.routers.qbittorrent.rule=Host(`qbittorrent.home.local`)"
+      - "traefik.http.services.qbittorrent.loadbalancer.server.port=8080"
+
+      # Bazarr
+      - "traefik.http.routers.bazarr.rule=Host(`bazarr.home.local`)"
+      - "traefik.http.routers.bazarr.service=bazarr"
+
+      # Radarr
+      - "traefik.http.routers.radarr.rule=Host(`radarr.home.local`)"
+      - "traefik.http.routers.radarr.service=radarr"
+
+      # Prowlarr
+      - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.home.local`)"
+      - "traefik.http.routers.prowlarr.service=prowlarr"
+
+      # Sonarr
+      - "traefik.http.routers.sonarr.rule=Host(`sonarr.home.local`)"
+      - "traefik.http.routers.sonarr.service=sonarr"
+
+      # Glance (optional dashboard)
+      - "glance.name=Gluetun"
+      - "glance.icon=si:openvpn"
+      - "glance.url=http://gluetun.home.local/"
+      - "glance.description=VPN"
+
+    environment:
+      - "VPN_SERVICE_PROVIDER=airvpn"
+      - "SERVER_COUNTRIES=Netherlands"
+    volumes:
+      - /srv/docker/gluetun:/gluetun
+
+  bazarr:
+    container_name: bazarr
+    image: linuxserver/bazarr:1.5.6
+    restart: unless-stopped
+    depends_on:
+      gluetun:
+        condition: service_healthy
+    network_mode: "container:gluetun"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+    volumes:
+      - /srv/docker/bazarr:/config
+      - /mnt/wd5tb/media/movies:/movies
+      - /mnt/wd5tb/media/tv:/tv
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
+      - "glance.name=Bazarr"
+      - "glance.icon=si:subtitleedit"
+      - "glance.url=http://bazarr.home.local/"
+      - "glance.description=Subtitle Manager"
+
+  prowlarr:
+    container_name: prowlarr
+    image: linuxserver/prowlarr:2.3.0
+    restart: unless-stopped
+    depends_on:
+      gluetun:
+        condition: service_healthy
+    network_mode: "container:gluetun"
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: "Europe/London"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - /srv/docker/prowlarr:/config
+      - /mnt/wd5tb:/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
+      - "glance.name=Prowlarr"
+      - "glance.icon=si:podcastindex"
+      - "glance.url=http://prowlarr.home.local/"
+      - "glance.description=Indexer Manager"
+
+  radarr:
+    container_name: radarr
+    image: linuxserver/radarr:6.0.4
+    restart: unless-stopped
+    depends_on:
+      gluetun:
+        condition: service_healthy
+    network_mode: "container:gluetun"
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: "Europe/London"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - /srv/docker/radarr:/config
+      - /mnt/wd5tb/torrents:/downloads
+      - /mnt/wd5tb/media/movies:/movies
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.radarr.loadbalancer.server.port=7878"
+      - "glance.name=Radarr"
+      - "glance.icon=si:radarr"
+      - "glance.url=http://radarr.home.local/"
+      - "glance.description=Movie Manager"
+
+  sonarr:
+    container_name: sonarr
+    image: linuxserver/sonarr:4.0.16
+    restart: unless-stopped
+    depends_on:
+      gluetun:
+        condition: service_healthy
+    network_mode: "container:gluetun"
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: "Europe/London"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - /srv/docker/sonarr:/config
+      - /mnt/wd5tb/torrents:/downloads
+      - /mnt/wd5tb/media/tv:/tv
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
+      - "glance.name=Sonarr"
+      - "glance.icon=si:sonarr"
+      - "glance.url=http://sonarr.home.local/"
+      - "glance.description=TV Show Manager"
+
+  qbittorrent:
+    container_name: qbittorrent
+    image: linuxserver/qbittorrent:20.04.1
+    restart: unless-stopped
+    depends_on:
+      gluetun:
+        condition: service_healthy
+    network_mode: "container:gluetun"
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: "Europe/London"
+      WEBUI_PORT: 8080
+    volumes:
+      - /srv/docker/qbittorrent:/config
+      - /mnt/wd5tb/torrents:/downloads
+    labels:
+      - "glance.name=QBitTorrent"
+      - "glance.icon=si:qbittorrent"
+      - "glance.url=http://qbittorrent.home.local/"
+      - "glance.description=Torrent Client"
+
+networks:
+  lan:
+    external: true
