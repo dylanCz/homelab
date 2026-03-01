@@ -48,7 +48,7 @@ services:
 
     environment:
       - "VPN_SERVICE_PROVIDER=airvpn"
-      - "SERVER_COUNTRIES=United Kingdom"
+      - "SERVER_COUNTRIES=Netherlands"
     volumes:
       - /srv/docker/gluetun:/gluetun
 
