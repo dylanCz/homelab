@@ -1,0 +1,56 @@
+name: Docker Homelab CI
+
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+    branches: ["main", "master"]
+
+jobs:
+  validate-compose:
+    name: Validate docker-compose files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate all compose files
+        run: |
+          for f in $(find . -name "docker-compose*.yml" -o -name "compose*.yml"); do
+            echo "Validating $f..."
+            docker compose -f "$f" config --quiet
+          done
+
+  checkov:
+    name: Checkov (IaC policy)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Checkov
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: .
+          framework: dockerfile,docker_compose
+          soft_fail: true
+          output_format: cli
+
+  trivy:
+    name: Trivy (CVE + secret scan)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Trivy on built images
+        run: |
+          for f in $(find . -name "docker-compose*.yml" -o -name "compose*.yml"); do
+            images=$(docker compose -f "$f" config --images 2>/dev/null || true)
+            for image in $images; do
+              echo "Scanning image: $image"
+              docker run --rm \
+                -v /var/run/docker.sock:/var/run/docker.sock \
+                aquasec/trivy:latest image \
+                --severity HIGH,CRITICAL \
+                --exit-code 0 \
+                "$image"
+            done
+          done
