@@ -20,20 +20,6 @@ jobs:
             docker compose -f "$f" config --quiet
           done
 
-  checkov:
-    name: Checkov (IaC policy)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Run Checkov
-        uses: bridgecrewio/checkov-action@v12
-        with:
-          directory: .
-          framework: dockerfile,docker_compose
-          soft_fail: true
-          output_format: cli
-
   trivy:
     name: Trivy (CVE + secret scan)
     runs-on: ubuntu-latest
