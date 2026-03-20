@@ -9,7 +9,7 @@ on:
 jobs:
   validate-compose:
     name: Validate docker-compose files
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -21,22 +21,27 @@ jobs:
           done
 
   trivy:
-    name: Trivy (CVE + secret scan)
-    runs-on: ubuntu-latest
+    name: Trivy
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      security-events: write
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Run Trivy on built images
-        run: |
-          for f in $(find . -name "docker-compose*.yml" -o -name "compose*.yml"); do
-            images=$(docker compose -f "$f" config --images 2>/dev/null || true)
-            for image in $images; do
-              echo "Scanning image: $image"
-              docker run --rm \
-                -v /var/run/docker.sock:/var/run/docker.sock \
-                aquasec/trivy:latest image \
-                --severity HIGH,CRITICAL \
-                --exit-code 0 \
-                "$image"
-            done
-          done
+      - name: Run Trivy vulnerability scanner in IaC mode
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          scan-type: "config"
+          hide-progress: true
+          format: "sarif"
+          output: "trivy-results.sarif"
+          exit-code: "1"
+          severity: "CRITICAL,HIGH"
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: "trivy-results.sarif"
