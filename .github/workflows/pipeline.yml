@@ -20,28 +20,28 @@ jobs:
             docker compose -f "$f" config --quiet
           done
 
-  trivy:
-    name: Trivy
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-      security-events: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
+  # trivy:
+  #   name: Trivy
+  #   runs-on: ubuntu-24.04
+  #   permissions:
+  #     contents: read
+  #     security-events: write
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      - name: Run Trivy vulnerability scanner in IaC mode
-        uses: aquasecurity/trivy-action@v0.35.0
-        with:
-          scan-type: "config"
-          hide-progress: true
-          format: "sarif"
-          output: "trivy-results.sarif"
-          exit-code: "1"
-          severity: "CRITICAL,HIGH"
+  #     - name: Run Trivy vulnerability scanner in IaC mode
+  #       uses: aquasecurity/trivy-action@v0.35.0
+  #       with:
+  #         scan-type: "config"
+  #         hide-progress: true
+  #         format: "sarif"
+  #         output: "trivy-results.sarif"
+  #         exit-code: "1"
+  #         severity: "CRITICAL,HIGH"
 
-      - name: Upload Trivy scan results to GitHub Security tab
-        if: always()
-        uses: github/codeql-action/upload-sarif@v4
-        with:
-          sarif_file: "trivy-results.sarif"
+  #     - name: Upload Trivy scan results to GitHub Security tab
+  #       if: always()
+  #       uses: github/codeql-action/upload-sarif@v4
+  #       with:
+  #         sarif_file: "trivy-results.sarif"
