@@ -1,21 +1,20 @@
 x-poll-config: &poll-config
   POLL_CONFIG: |
-    - url: https://github.com/DylanCz/homelab-docker.git
+    - url: https://github.com/DylanCz/homelab.git
       interval: 180
 
 services:
   app:
     container_name: doco-cd
-    image: ghcr.io/kimdre/doco-cd:0.72.1
+    image: ghcr.io/kimdre/doco-cd:0.76.0
     restart: unless-stopped
     ports:
       - "9120:9120"
     environment:
       TZ: Europe/London
+      GIT_ACCESS_TOKEN: <place pat here>
       SOPS_AGE_KEY_FILE: /run/secrets/sops_age_key
       <<: *poll-config
-    env_file:
-      - secrets.enc.env
     secrets:
       - sops_age_key
     volumes:
@@ -29,7 +28,7 @@ services:
 
 secrets:
   sops_age_key:
-    file: /srv/docker/dococd/sops_age_key.txt
+    file: /<path_to>/sops_age_key.txt
 
 volumes:
   data:
