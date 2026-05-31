@@ -1,7 +1,7 @@
 services:
   glance:
     container_name: Glance
-    image: glanceapp/glance:v0.8.4
+    image: glanceapp/glance:v0.8.5
     volumes:
       - /srv/docker/glance:/app/config
       - /var/run/docker.sock:/var/run/docker.sock
