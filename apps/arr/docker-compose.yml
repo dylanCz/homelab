@@ -104,7 +104,7 @@ services:
 
   radarr:
     container_name: radarr
-    image: linuxserver/radarr:6.1.1
+    image: linuxserver/radarr:6.2.1
     restart: unless-stopped
     depends_on:
       gluetun:
