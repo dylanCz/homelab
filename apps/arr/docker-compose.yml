@@ -56,7 +56,7 @@ services:
 
   bazarr:
     container_name: bazarr
-    image: linuxserver/bazarr:1.5.6
+    image: linuxserver/bazarr:1.6.0
     restart: unless-stopped
     depends_on:
       gluetun:
