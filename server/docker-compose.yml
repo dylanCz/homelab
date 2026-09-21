@@ -1,25 +1,27 @@
-x-poll-config: &poll-config
-  POLL_CONFIG: |
-    - url: https://github.com/DylanCz/homelab.git
-      interval: 180
-
 services:
   app:
     container_name: doco-cd
-    image: ghcr.io/kimdre/doco-cd:0.105.2
+    image: ghcr.io/kimdre/doco-cd:0.120.0
     restart: unless-stopped
     ports:
       - "9120:9120"
     environment:
       TZ: Europe/London
-      GIT_ACCESS_TOKEN: <place pat here>
+      PASS_ENV: "true"
       SOPS_AGE_KEY_FILE: /run/secrets/sops_age_key
-      <<: *poll-config
+      POLL_CONFIG_FILE: /etc/doco-cd/poll.yml
     secrets:
       - sops_age_key
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./poll.yml:/etc/doco-cd/poll.yml:ro
       - /srv/docker/dococd:/data
+    healthcheck:
+      test: ["CMD", "/doco-cd", "healthcheck"]
+      start_period: 15s
+      interval: 30s
+      timeout: 5s
+      retries: 3
     labels:
       - "glance.name=DocoCD"
       - "glance.icon=si:flux"
@@ -28,7 +30,7 @@ services:
 
 secrets:
   sops_age_key:
-    file: /<path_to>/sops_age_key.txt
+    file: sops_age_key.txt
 
 volumes:
   data:
