@@ -2,8 +2,4 @@ name: homelab
 working_dir: apps/
 auto_discover: true
 auto_discover_opts:
-  depth: 1
-environment:
-  APP_TAG: "v1.0.0"
-reconciliation:
-  events: [unhealthy]
+  depth: 0
