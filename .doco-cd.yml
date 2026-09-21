@@ -1,3 +1,4 @@
+name: homelab
 working_dir: apps/
 auto_discover: true
 auto_discover_opts:
