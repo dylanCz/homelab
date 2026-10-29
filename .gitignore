@@ -1,2 +1,3 @@
 secrets.env
 sops_age_key.txt
+.DS_Store
