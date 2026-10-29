@@ -3,7 +3,7 @@ services:
     container_name: Glance
     image: glanceapp/glance:v0.8.7
     volumes:
-      - /srv/docker/glance:/app/config
+      - /srv/docker/dococd/github.com/DylanCz/homelab/artifacts/0d7b47d099c98b502b9827aa44fbd4c55db2640d/apps/glance:/app/config
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - 8020:8080
