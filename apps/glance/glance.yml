@@ -20,20 +20,28 @@ pages:
               - type: reddit
                 subreddit: ssbm
                 show-thumbnails: true
-                limit: 5
+                limit: 10
               - type: reddit
-                subreddit: 2xko
+                subreddit: globaloffensive
                 show-thumbnails: true
-                limit: 5
+                limit: 10
               - type: reddit
-                subreddit: selfhosted
+                subreddit: vgc
                 show-thumbnails: true
-                limit: 5
-          - type: videos
-            channels:
-              - UClt01z1wHHT7c5lKcU8pxRQ # hbomberguy
-              - UC9OZkS1Mhl5UvKSiPrYqsxg # Wolfey
-              - UCu6S7Z0ln2llqNTLhRKFxJA # Tampa
+                limit: 10
+              - type: reddit
+                subreddit: battlestations
+                show-thumbnails: true
+                limit: 10
+              - type: reddit
+                subreddit: glasgow
+                show-thumbnails: true
+                limit: 10
+          # - type: videos
+          #   channels:
+          #     - UClt01z1wHHT7c5lKcU8pxRQ # hbomberguy
+          #     - UC9OZkS1Mhl5UvKSiPrYqsxg # Wolfey
+          #     - UCu6S7Z0ln2llqNTLhRKFxJA # Tampa
 
       - size: small
         widgets:
